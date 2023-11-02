@@ -1,20 +1,13 @@
-import express from "express";
-import * as tweetController from '../controller/tweet.js';
+import * as tweetRepository from '../data/tweet.js';
 
-const router = express.Router();
+export async function getTweets(req, res){
+    const username = req.query.username;
+    const data = await (username
+        ? tweetRepository.getAllByUsername(username)
+        : tweetRepository.getAll());
+    res.status(200).json(data);
+}
 
-// GET / tweets
-// GET / tweets?username=:username
-// GET / tweets/:id
-
-// Post / tweets
-// PUT / tweets/:id
-//DELETE / tweets/:id
-
-
-
-// GET 불러오기
-// GET / tweets?username=:username username으로 불러오기
 // router
 //     .get('/', (req, res, next) => {
 //         const username = req.query.username;
@@ -24,12 +17,18 @@ const router = express.Router();
 //         res.status(200).json(data);
 //     });
 
-// 위에거를 간단하게↓
-router.get('/', tweetController.getTweets);
 
+// getTweet
+export async function getTweet(req, res, next){
+    const id = req.params.id;
+    const tweet = await tweetRepository.getById(id);
+    if(tweet){
+        res.status(200).json(tweet);
+    }else{
+        res.status(400).json({message: `Tweet id(${id}) not found`});
+    }
+}
 
-
-// GET / tweets/:id id로 불러오기
 // router
 //     .get('/:id', (req, res, next) =>{
 //         const id = req.params.id;
@@ -41,12 +40,13 @@ router.get('/', tweetController.getTweets);
 //         }
 //     });
 
-// 위에거를 간단하게↓
-router.get('/:id', tweetController.getTweet);
 
-
-
-// Post / tweets    등록하기
+// createTweet
+export async function createTweet(req, res, next){
+    const {text, name, username} = req.body;
+    const tweet = await tweetRepository.create(text, name, username);
+    res.status(201).json(tweet);
+}
 // router
 //     .post('/', (req, res, next) => {
 //         const {text, name, username} = req.body;
@@ -60,14 +60,21 @@ router.get('/:id', tweetController.getTweet);
 //         tweets = [tweet, ...tweets];
 //         res.status(201).json(tweets);
 //     });
-// 위에거를 간단하게↓
-router.post('/', tweetController.createTweet);
 
 
 
+// updateTweet
+export async function updateTweet(req, res, next){
+    const id = req.params.id;
+    const text = req.body.text;
+    const tweet = await tweetRepository.update(id, text);
+    if(tweet){
+        res.status(200).json(tweet);
+    }else{
+        res.status(404).json({message: `Tweet id(${id}) not found`});
+    }
+}
 
-
-// PUT / tweets/:id 수정하기
 // router
 //     .put('/:id', (req, res, next) =>{
 //         const id = req.params.id;
@@ -80,24 +87,20 @@ router.post('/', tweetController.createTweet);
 //             res.status(404).json({message: `Tweet id(${id}) not found`});
 //         }
 //     });
-// 위에거를 간단하게↓
-router.put('/:id', tweetController.updateTweet);
 
 
 
 
+// deleteTweet
+export async function deleteTweet(req, res, next){
+    const id = req.params.id;
+    await tweetRepository.remove(id);
+    res.sendStatus(204);
+}
 
-//DELETE / tweets/:id 삭제하기
 // router
 //     .delete('/:id', (req, res, next) =>{
 //         const id = req.params.id;
 //         tweets = tweets.filter((tweet) => tweet.id !== id);
 //         res.sendStatus(204);
 //     });
-// 위에거를 간단하게↓
-router.delete('/:id', tweetController.deleteTweet);
-
-
-
-
-export default router;
