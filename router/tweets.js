@@ -1,7 +1,21 @@
 import express from "express";
 import * as tweetController from '../controller/tweet.js';
+import { body} from 'express-validator';
+import { validate } from "../middleware/validator.js";
 
 const router = express.Router();
+
+
+/*
+
+    POST, PUT에 text에 빈문자열을 없애고, 3자이상 입력해야 저장되도록 API에 적용
+
+*/
+
+const validateTweet = [
+    body('text').trim().isLength({ min: 3 }).withMessage('최소 3자이상 입력해야합니다!'), validate
+];
+
 
 // GET / tweets
 // GET / tweets?username=:username
@@ -10,7 +24,6 @@ const router = express.Router();
 // Post / tweets
 // PUT / tweets/:id
 //DELETE / tweets/:id
-
 
 
 // GET 불러오기
@@ -61,7 +74,9 @@ router.get('/:id', tweetController.getTweet);
 //         res.status(201).json(tweets);
 //     });
 // 위에거를 간단하게↓
-router.post('/', tweetController.createTweet);
+// router.post('/', tweetController.createTweet);
+
+router.post('/', validateTweet, tweetController.createTweet);
 
 
 
@@ -81,7 +96,7 @@ router.post('/', tweetController.createTweet);
 //         }
 //     });
 // 위에거를 간단하게↓
-router.put('/:id', tweetController.updateTweet);
+router.put('/:id', validateTweet, tweetController.updateTweet);
 
 
 
