@@ -1,4 +1,7 @@
 import * as tweetRepository from '../data/tweet.js';
+import * as tweetRepository2 from '../data/auth.js';
+import bcrypt from "bcrypt";
+
 
 export async function getTweets(req, res){
     const username = req.query.username;
@@ -74,6 +77,31 @@ export async function updateTweet(req, res, next){
         res.status(404).json({message: `Tweet id(${id}) not found`});
     }
 }
+
+// 회원가입
+export async function signupTweet(req, res, next){
+    const {id, username, password, name, email} = req.body;
+    const hased = bcrypt.hashSync(password, 10)
+    const user = await tweetRepository2.signup(id, username, hased, name, email);
+    res.status(201).json(user);
+}
+
+// 정보확인
+export async function loginTweet(req, res, next){
+    const {id, password} = req.body;
+    const user = await tweetRepository2.login(id, password);
+    if(user){
+        res.status(200).json(user);
+    }else{
+        res.status(400).json({message: '존재하지 않습니다'});
+    }
+}
+
+
+
+
+
+
 
 // router
 //     .put('/:id', (req, res, next) =>{

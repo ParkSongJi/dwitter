@@ -5,13 +5,11 @@ import { validate } from "../middleware/validator.js";
 
 const router = express.Router();
 
-
 /*
 
     POST, PUT에 text에 빈문자열을 없애고, 3자이상 입력해야 저장되도록 API에 적용
 
 */
-
 const validateTweet = [
     body('text').trim().isLength({ min: 3 }).withMessage('최소 3자이상 입력해야합니다!'), validate
 ];
@@ -40,8 +38,6 @@ const validateTweet = [
 // 위에거를 간단하게↓
 router.get('/', tweetController.getTweets);
 
-
-
 // GET / tweets/:id id로 불러오기
 // router
 //     .get('/:id', (req, res, next) =>{
@@ -53,7 +49,6 @@ router.get('/', tweetController.getTweets);
 //             res.status(404).json({message: `Tweet id(${id}) not found`});
 //         }
 //     });
-
 // 위에거를 간단하게↓
 router.get('/:id', tweetController.getTweet);
 
@@ -77,8 +72,6 @@ router.get('/:id', tweetController.getTweet);
 // router.post('/', tweetController.createTweet);
 
 router.post('/', validateTweet, tweetController.createTweet);
-
-
 
 
 
