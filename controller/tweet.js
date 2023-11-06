@@ -1,6 +1,5 @@
 import * as tweetRepository from '../data/tweet.js';
-import * as tweetRepository2 from '../data/auth.js';
-import bcrypt from "bcrypt";
+
 
 
 export async function getTweets(req, res){
@@ -46,8 +45,8 @@ export async function getTweet(req, res, next){
 
 // createTweet
 export async function createTweet(req, res, next){
-    const {text, name, username} = req.body;
-    const tweet = await tweetRepository.create(text, name, username);
+    const {text} = req.body;
+    const tweet = await tweetRepository.create(text, req.userId);
     res.status(201).json(tweet);
 }
 // router
@@ -68,34 +67,44 @@ export async function createTweet(req, res, next){
 
 // updateTweet
 export async function updateTweet(req, res, next){
+    // const authHeader = req.get('Authorization');
+    // if (!(authHeader && authHeader.startsWith('Bearer '))){
+    //     return res.status(401).json(AUTH_ERROR);
+    // }
+
     const id = req.params.id;
     const text = req.body.text;
-    const tweet = await tweetRepository.update(id, text);
-    if(tweet){
-        res.status(200).json(tweet);
-    }else{
-        res.status(404).json({message: `Tweet id(${id}) not found`});
+    const tweet = await tweetRepository.getById(id);
+    if(!tweet){
+        res.status(404).json({Message: `Tweet id(${id}) not found`});
     }
+
+    if (tweet.userId !== req.userId){
+        return res.sendStatus(403)
+    }
+    const updated = await tweetRepository.update(id, text);
+    res.status(200).json(updated);
 }
+    
 
 // 회원가입
-export async function signupTweet(req, res, next){
-    const {id, username, password, name, email} = req.body;
-    const hased = bcrypt.hashSync(password, 10)
-    const user = await tweetRepository2.signup(id, username, hased, name, email);
-    res.status(201).json(user);
-}
+// export async function signupTweet(req, res, next){
+//     const {id, username, password, name, email} = req.body;
+//     const hased = bcrypt.hashSync(password, 10)
+//     const user = await tweetRepository2.signup(id, username, hased, name, email);
+//     res.status(201).json(user);
+// }
 
 // 정보확인
-export async function loginTweet(req, res, next){
-    const {id, password} = req.body;
-    const user = await tweetRepository2.login(id, password);
-    if(user){
-        res.status(200).json(user);
-    }else{
-        res.status(400).json({message: '존재하지 않습니다'});
-    }
-}
+// export async function loginTweet(req, res, next){
+//     const {id, password} = req.body;
+//     const user = await tweetRepository2.login(id, password);
+//     if(user){
+//         res.status(200).json(user);
+//     }else{
+//         res.status(400).json({message: '존재하지 않습니다'});
+//     }
+// }
 
 
 
@@ -121,7 +130,23 @@ export async function loginTweet(req, res, next){
 
 // deleteTweet
 export async function deleteTweet(req, res, next){
+//     const authHeader = req.get('Authorization');
+//     if (!(authHeader && authHeader.startsWith('Bearer '))){
+//         return res.status(401).json(AUTH_ERROR);
+//     }
+//     const id = req.params.id;
+//     await tweetRepository.remove(id);
+//     res.sendStatus(204);
+// }
     const id = req.params.id;
+    const tweet = await tweetRepository.getById(id);
+    if(!tweet){
+        res.status(404).json({Message: `Tweet id(${id}) not found`});
+    }
+
+    if (tweet.userId !== req.userId){
+        return res.sendStatus(403)
+    }
     await tweetRepository.remove(id);
     res.sendStatus(204);
 }

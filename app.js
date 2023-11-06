@@ -8,7 +8,8 @@ const app = express();
 
 app.use(express.json());
 app.use(morgan("dev"));
-app.use('/tweets', tweetsRouter, authRouter);
+app.use('/tweets', tweetsRouter);
+app.use('/auth', authRouter);
 // 라우터
 
 app.use((req, res, next) => {

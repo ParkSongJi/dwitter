@@ -2,6 +2,7 @@ import express from "express";
 import * as tweetController from '../controller/tweet.js';
 import { body} from 'express-validator';
 import { validate } from "../middleware/validator.js";
+import {isAuth} from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -36,7 +37,7 @@ const validateTweet = [
 //     });
 
 // 위에거를 간단하게↓
-router.get('/', tweetController.getTweets);
+router.get('/', isAuth, tweetController.getTweets);
 
 // GET / tweets/:id id로 불러오기
 // router
@@ -50,7 +51,7 @@ router.get('/', tweetController.getTweets);
 //         }
 //     });
 // 위에거를 간단하게↓
-router.get('/:id', tweetController.getTweet);
+router.get('/:id', isAuth, tweetController.getTweet);
 
 
 
@@ -71,7 +72,7 @@ router.get('/:id', tweetController.getTweet);
 // 위에거를 간단하게↓
 // router.post('/', tweetController.createTweet);
 
-router.post('/', validateTweet, tweetController.createTweet);
+router.post('/', isAuth, validateTweet, tweetController.createTweet);
 
 
 
@@ -89,7 +90,7 @@ router.post('/', validateTweet, tweetController.createTweet);
 //         }
 //     });
 // 위에거를 간단하게↓
-router.put('/:id', validateTweet, tweetController.updateTweet);
+router.put('/:id', isAuth, validateTweet, tweetController.updateTweet);
 
 
 
@@ -103,7 +104,7 @@ router.put('/:id', validateTweet, tweetController.updateTweet);
 //         res.sendStatus(204);
 //     });
 // 위에거를 간단하게↓
-router.delete('/:id', tweetController.deleteTweet);
+router.delete('/:id', isAuth, tweetController.deleteTweet);
 
 
 
