@@ -7,19 +7,15 @@ import {isAuth} from '../middleware/auth.js';
 const router = express.Router();
 
 /*
-
     POST, PUT에 text에 빈문자열을 없애고, 3자이상 입력해야 저장되도록 API에 적용
-
 */
 const validateTweet = [
     body('text').trim().isLength({ min: 3 }).withMessage('최소 3자이상 입력해야합니다!'), validate
 ];
 
-
 // GET / tweets
 // GET / tweets?username=:username
 // GET / tweets/:id
-
 // Post / tweets
 // PUT / tweets/:id
 //DELETE / tweets/:id
@@ -105,8 +101,5 @@ router.put('/:id', isAuth, validateTweet, tweetController.updateTweet);
 //     });
 // 위에거를 간단하게↓
 router.delete('/:id', isAuth, tweetController.deleteTweet);
-
-
-
 
 export default router;

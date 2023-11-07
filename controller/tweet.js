@@ -71,7 +71,6 @@ export async function updateTweet(req, res, next){
     // if (!(authHeader && authHeader.startsWith('Bearer '))){
     //     return res.status(401).json(AUTH_ERROR);
     // }
-
     const id = req.params.id;
     const text = req.body.text;
     const tweet = await tweetRepository.getById(id);
