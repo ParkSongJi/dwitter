@@ -79,7 +79,6 @@ export async function updateTweet(req, res, next){
     if(!tweet){
         res.status(404).json({Message: `Tweet id(${id}) not found`});
     }
-
     if (tweet.userId !== req.userId){
         return res.sendStatus(403)
     }

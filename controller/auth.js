@@ -30,7 +30,6 @@ export async function signup(req, res) {
 export async function login(req, res){
     // body에서 username, password 받아오기
     const {username, password} = req.body;
-
     // username 있는지 확인하기(없으면 401)
     const user = await userRepository.findByUsername(username);
     if (!user){
