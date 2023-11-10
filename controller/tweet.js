@@ -1,4 +1,5 @@
 import * as tweetRepository from '../data/tweet.js';
+import {getSocketIO} from  '../connection/socket.js';
 
 
 
@@ -48,6 +49,7 @@ export async function createTweet(req, res, next){
     const {text} = req.body;
     const tweet = await tweetRepository.create(text, req.userId);
     res.status(201).json(tweet);
+    getSocketIO().emit('tweets', tweet);
 }
 // router
 //     .post('/', (req, res, next) => {
@@ -139,12 +141,11 @@ export async function deleteTweet(req, res, next){
 // }
     const id = req.params.id;
     const tweet = await tweetRepository.getById(id);
-    if(!tweet){
-        res.status(404).json({Message: `Tweet id(${id}) not found`});
+    if (!tweet) {
+    res.status(404).json({message: `Tweet id(${id}) not found`});
     }
-
-    if (tweet.userId !== req.userId){
-        return res.sendStatus(403)
+    if (tweet.userId !== req.userId) {
+        return res.sendStatus(403);
     }
     await tweetRepository.remove(id);
     res.sendStatus(204);

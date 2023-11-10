@@ -8,23 +8,23 @@ import {config} from '../config.js';
 // const jwtExpiresInDays = '2D';
 // const bcryptSaltRounds = 12;
 
-export async function signup(req, res){
-    const {username, password, name, email, url} = req.body;
+export async function signup(req, res) {
+    const { username, password, name, email, url } = req.body;
     const found = await userRepository.findByUsername(username);
-    if (found){
-        return res.status(409).json({message: `${username}이 이미 가입되었음`});
+    if (found) {
+        return res.status(409).json({ message: `${username}이 이미 가입되었음`});
     }
 
-    const hased = await bcrypt.hash(password, config.bcrypt.saltRounds);
+    const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
     const userId = await userRepository.createUser({
         username,
-        password: hased,
+        password: hashed,
         name,
         email,
         url
     });
     const token = createJwtToken(userId);
-    res.status(201).json({token, username});
+    res.status(201).json( {token, username });
 }
 
 export async function login(req, res){
@@ -38,18 +38,16 @@ export async function login(req, res){
     }
 
     // 있으면 비밀번호 비교하기(틀리면 401)
-    const isvalidpassword = await bcrypt.compare(password, user.password);
-    if(!isvalidpassword){
-        return res.status(401).json({message: '비밀번호를 확인해주세요!'});
+    const isValidpassword = await bcrypt.compare(password, user.password);
+    if (!isValidpassword) {
+        return res.status(401).json({ message: '비밀번호가 틀렸음' });
     }
-    // // 맞으면 토큰 생성(200)
     const token = createJwtToken(user.id);
-    res.status(201).json({token, username});
-    
+    res.status(200).json({ token, username });
 }
 
-function createJwtToken(id){
-    return jwt.sign({id}, config.jwt.secretKey, {expiresIn:config.jwt.expiresInSec});
+function createJwtToken(id) {
+    return jwt.sign({ id }, config.jwt.secretKey, { expiresIn: config.jwt.expiresInSec });
 }
 
 export async function me(req, res, next){
