@@ -7,7 +7,7 @@ import {config} from './config.js';
 
 import {initSocket} from './connection/socket.js';
 
-import {db} from './db/database.js';
+import {connectDB} from './db/database.js';
 
 
 console.log(process.env.JWT_SECRET);
@@ -27,5 +27,7 @@ app.use((req, res, next) => {
 
 
 // db.getConnection().then(connection => console.log(connection));
-const server = app.listen(config.host.port);
-initSocket(server);
+connectDB().then((db) => {
+    const server = app.listen(config.host.port);
+    initSocket(server);
+}).catch(console.error);
