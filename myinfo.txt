@@ -1,0 +1,5 @@
+qkrthdwl123
+
+pZ2699ENtyfzRURH
+
+mongodb+srv://<username>:<password>@cluster0.iok9c35.mongodb.net/?retryWrites=true&w=majority
